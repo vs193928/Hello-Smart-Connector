@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="module-using-http" xmlns="http://www.mulesoft.org/schema/mule/module"
+	xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:httpn="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+           http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<property name="username" type="string" doc:description="Username credential." />
+	<property name="password" type="string" password="true"
+		doc:description="Password credential" />
+
+	<httpn:request-config name="github-httpreq-config"
+		basePath="/">
+		<httpn:request-connection host="api.github.com"
+			protocol="HTTPS" port="443">
+			<httpn:authentication>
+				<httpn:basic-authentication username="#[vars.username]"
+					password="#[vars.password]" />
+			</httpn:authentication>
+		</httpn:request-connection>
+	</httpn:request-config>
+
+	<operation name="get-user"
+		doc:description="Lists public and private profile information when authenticated.">
+		<body>
+			<httpn:request config-ref="github-httpreq-config" path="/user"
+				method="GET" />
+		</body>
+		<output type="string" doc:description="User information if logged properly." />
+	</operation>
+</module>
